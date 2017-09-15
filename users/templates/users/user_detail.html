@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ player }} Minecraft Account{% endblock %}
+{% block body %}
+<h1>{{ the_user.username }}</h1>
+{% if owned_mc_accounts %}
+<h2>Owned Minecraft Accounts</h2>
+<table class="table">
+    <tr><th></th><th>Username</th><th>Last Seen</th></tr>
+    {% for player in owned_mc_accounts %}
+    <tr>
+        <td><img src="{{player.get_absolute_url}}skin/head-64.png" height="64px" width="64px" /></td>
+        <td><a href="{{player.get_absolute_url}}">{{player.name}}</a></td>
+        <td>{{player.last_seen.date}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<div id="playtime-graph"></div>
+{% endif %}
+{% if owned_servers %}
+<h2>Owned Minecraft Servers</h2>
+<table class="table">
+    <tr><th>Server</th><th>Rank</th><th>Status</th><th>Players Online</th><th>Reporting Mode</th></tr>
+    {% for server in owned_servers %}
+    <tr>
+        <td><a href="{{server.get_absolute_url}}">{{server.name}}</a></td>
+        <td>#{{server.rank}}</td>
+        <td>{{ server.last_up.status|yesno:"Online,Offline" }}</td>
+        <td>{% if server.last_up.status %}{{server.last_up.playerCount}}{% else %}-{% endif %}</td>
+        <td>{% if server.last_up.status %}
+            {% if server.last_up.playerCount %}{{ server.full_query|yesno:"Full,Basic" }} Query{% else %}Unknown{% endif %}
+            {% else %}-{% endif %}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock body %}

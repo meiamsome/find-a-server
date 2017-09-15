@@ -1,0 +1,45 @@
+{% if graphs %}
+<script type="text/javascript" src="//www.google.com/jsapi"></script>
+<script type="text/javascript">
+    $(window).resize(function() {
+        if(this.resizeTO) clearTimeout(this.resizeTO);
+        this.resizeTO = setTimeout(function() {
+            $(this).trigger('resizeEnd');
+        }, 100);
+    });
+
+
+    google.load('visualization', '1.0', {'packages': [
+      {% for g in graphs %}
+        '{{ g.package|escapejs }}'{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]});
+    google.setOnLoadCallback(function() {
+        {% for g in graphs %}
+        (function() {
+            var data = new google.visualization.DataTable();
+            {% for c in g.cols %}
+              data.addColumn('{{ c.type }}', '{{ c.id }}');
+            {% endfor %}
+            data.addRows([
+                {% for d in g.data %}
+                  [
+                    {% for v in d %}
+                      {{ v|safe }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                  ]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]);
+            var chart = new google.visualization.{{ g.type }}(
+              document.getElementById('{{ g.element }}')
+            );
+            chart.draw(data{% if g.options %}, {{ g.options|safe }}{% endif %});
+            $(window).on('resizeEnd', function() {
+                chart.draw(data{% if g.options %},
+                  {{ g.options|safe }}{% endif %});
+            });
+        })();
+        {% endfor %}
+    });
+</script>
+{% endif %}

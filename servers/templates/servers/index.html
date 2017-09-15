@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Top Servers</h1>
+<p>
+    These are the servers that Find A Server has ranked highest.
+</p><!--
+<div class="filters col-md-2">
+<h4>Filter</h4>
+<p>Use these filters to narrow down your search.</p>
+<h5>Current Filters</h5>
+<div class="filter-active">
+    On-line Mode
+</div>
+</div> -->
+<div class="">
+{% if page %}
+{% for server in page %}
+{% include "servers/snipet.html" %}
+{% endfor %}
+{% if page.has_other_pages %}
+<ul class="pager">
+    {% if page.has_previous %}
+    <li><a href="{% url 'servers:index' %}?page={{ page.previous_page_number }}">Previous</a></li>
+    {% endif %}
+    {% if page.has_next %}
+    <li><a href="{% url 'servers:index' %}?page={{ page.next_page_number }}">Next</a></li>
+    {% endif %}
+
+</ul>
+{% endif %}
+{% else %}
+<p>No servers are available.</p>
+{% endif %}
+</div>
+{% endblock body %}

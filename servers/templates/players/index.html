@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block body %}
+{% load myfilters %}
+<div class="row">
+<div{% if find_player_form %} class="col-md-6"{% endif %}><div id="player-count-graph">{% if not valid %}
+<h3>Server Error</h3>
+<p>We are currently unable to generate content for this page. We are sorry for any inconvenience caused.</p>
+{% endif %}</div></div>
+{% if find_player_form %}
+<div class="col-md-6">
+    <h2>Find a Player <small><a href="/players/list/">browse all</a></small></h2>
+
+    <form class="form-horizontal" role="form" method="post" action="{% url 'servers:player_search' %}">
+        {% include "form_template.html" with form=find_player_form %}
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Find</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endif %}
+</div>
+{% if top_players %}
+<div class="col-sm-6 col-lg-3">
+    <h2>Top Players</h2>
+    <ul class="list-unstyled player-list">
+        {% for player in top_players %}
+        <li class="col-xs-12">
+            <img src="{{ player.get_absolute_url }}skin/head-64.png" width="64" height="64" alt="Face of {{player}}"/>
+
+            <div>
+                <a href="{{ player.get_absolute_url }}">{{ player.name}}</a><br/>{{player.time|timedelta}}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="clearfix"></div>
+</div>
+{% endif %}
+
+{% if online %}
+<div class="col-sm-6 col-lg-3">
+    <h2>Online Now</h2>
+    <ul class="list-unstyled player-list">
+        {% for player in online %}
+        <li class="col-xs-12">
+            <img src="{{ player.get_absolute_url }}skin/head-64.png" width="64" height="64" alt="Face of {{player}}"/>
+
+            <div>
+                <a href="{{ player.get_absolute_url }}">{{ player.name}}</a><br/>Playing for
+                {{player.duration|timedelta}}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="clearfix"></div>
+</div>
+{% endif %}
+{% endblock body %}

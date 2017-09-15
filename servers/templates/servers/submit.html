@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Submit A Server</h1>
+{% if player.owner and player.owner == user %}
+<p class="bg-info" style="padding:15px">
+    You have verified your ownership of {{ player }}.
+</p>
+{% else %}
+{% if player.owner %}
+<p class="bg-warning" style="padding:15px">
+    {{ player }} is already owned by {{ player.owner }}. Please only proceed if this account is yours.
+</p>
+{% endif %}
+<p>
+    This is the page to add a new server to track to the database. Duplicates are not allowed
+    for various reasons and any duplicate servers will be nullified.
+</p>
+<form class="form-horizontal" role="form" method="post">
+    {% include "form_template.html" %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Verify</button>
+        </div>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}"/>
+</form>
+{% endif %}
+{% endblock %}

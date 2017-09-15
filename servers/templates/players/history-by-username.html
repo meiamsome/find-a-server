@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Username history of {{ username }}{% endblock %}
+{% block body %}
+
+<h2>Username History of {{ username }}</h2>
+<p class="bg-info">
+    This is a list of all the name changes we've detected for this username. As we only check names when we detect them
+    on servers with the Advanced Query enabled this may not be a complete list of all changes and dates may be
+    inaccurate.
+    The current user is always shown in green.
+</p>
+<table class="table">
+    <tr>
+        <th>Current Skin</th>
+        <th>Used As</th>
+        <th>Current Username</th>
+        <th>Used Dates</th>
+    </tr>
+    {% for holder in holders %}
+    <tr
+    {% if current_holder and holder.minecraft_account_id == current_holder.id %} class="success"{% endif %}>
+    <td>
+        <a href="{{ holder.minecraft_account.get_absolute_url }}">
+            <img src="{{ holder.minecraft_account.get_absolute_url }}skin/head-64.png" height="64" width="64" alt="Current Face of {{holder.minecraft_account}}"/>
+        </a>
+    </td>
+    <td>{{ holder.name }}</td>
+    <td><a href="{{ holder.minecraft_account.get_absolute_url }}">{{ holder.minecraft_account.name }}</a></td>
+    <td>{% if holder.end %}{{holder.start}} - {{holder.end}}{% else %}Since {{holder.start}}{%endif%}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock body %}

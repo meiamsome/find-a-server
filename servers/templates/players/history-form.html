@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Find a Player - Where has a minecraft account been playing recently?{% endblock %}
+{% block body %}
+<h1>Find a Player</h1>
+<p>
+    Haven't seen a player in a long time? Miss your friend? Or maybe you just want to look your own account up, this is
+    the place to do it.
+</p>
+<form class="form-horizontal" role="form" method="post" action="{% url 'servers:player_search' %}">
+    {% include "form_template.html" %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Find</button>
+        </div>
+    </div>
+</form>
+{% if suggestions %}
+<h3>Did you mean..?</h3>
+<p class="bg-info">Here's some tracked users that are like the one you requested.</p>
+<ul class="list-unstyled player-list">
+{% for user in suggestions %}
+<li class="col-xs-12 col-sm-6 col-md-3" style="padding:5px;">
+    <img src="{{ user.minecraft_account.get_absolute_url }}skin/head-64.png" height="64" width="64" alt="Face of {{user.minecraft_account }}"/>
+    <div>
+        <a href="{% url "servers:find_player" user.name %}" >{{ user.name }}</a>
+    </div>
+</li>
+{% endfor %}
+{% endif %}
+{% endblock body %}

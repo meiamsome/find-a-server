@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Manage Server {{ server.name }}{% endblock %}
+{% block body %}
+<h1>Manage <a href="{{ server.get_absolute_url }}" >{{ server.name }}</a></h1>
+<h2>Update Info</h2>
+<form class="form-horizontal" role="form" method="post">
+    {% include "form_template.html" %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Update</button>
+        </div>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}"/>
+</form>
+<h2>Score Breakdown</h2>
+<table class="table">
+    <thead>
+        <tr><th>Score Reason</th><th>How is it scored.</th><th>Score</th></tr>
+    </thead>
+    <tbody>
+        {% for score in server_scores %}
+        <tr>
+            <th>{{ score.name }}</th>
+            <td>{{ score.how | safe }}</td>
+            <td>{{ score.number }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="active">
+            <th>Score Total</th>
+            <td>Sum of all scores so far.</td>
+            <td>{{ total_score_pre }}</td>
+        </tr>
+        {% for multiplier in server_multipliers %}
+        <tr>
+            <th>{{ multiplier.name }}</th>
+            <td>{{ multiplier.how | safe }}</td>
+            <td>{{ multiplier.format }}x</td>
+        </tr>
+        {% endfor %}
+        <tr class="active">
+            <th>Multiplier Total</th>
+            <td>Product of all multipliers</td>
+            <td>{{ total_multiplier }}x</td>
+        </tr>
+        <tr class="active">
+            <th>Total</th>
+            <td>Score times multiplier</td>
+            <td>{{ score }} points{% if server.rank %},
+              rank {{ server.rank }}{% endif %}</td>
+        </tr>
+    </tbody>
+</table>
+{% if errors %}
+<h2>Errors</h2>
+<a name="errors"></a>
+<table class="table">
+    <tr><th>Time</th><th>Description</th></tr>
+    {% for error in errors %}
+      <tr>
+        <td>{{ error.time }}</td>
+        <td>
+          {% if error.safe %}
+            {{error.description|linebreaksbr}}
+          {%else%}
+            Unexpected Error, the staff will look at this error soon.
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock body %}

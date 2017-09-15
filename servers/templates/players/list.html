@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body %}
+{% load myfilters %}
+<h1>All Players</h1>
+<div class="row">
+{% if page %}
+{% for player in page %}
+<div class="col-sm-6 col-lg-3" style="min-height:70px;">
+    <img src="{{ player.get_absolute_url }}skin/head-64.png" width="64" height="64" alt="Face of {{player}}" style="position: absolute;"/>
+    <div>
+        <a href="{{ player.get_absolute_url }}" style="padding-left: 70px;">{{ player.name}}</a><br/>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% if page.has_other_pages %}
+<ul class="pager">
+    {% if page.has_previous %}
+    <li><a href="{% url 'servers:player_list' %}?page={{ page.previous_page_number }}">Previous</a></li>
+    {% endif %}
+    {% if page.has_next %}
+    <li><a href="{% url 'servers:player_list' %}?page={{ page.next_page_number }}">Next</a></li>
+    {% endif %}
+
+</ul>
+{% endif %}
+{% endif %}
+{% endblock body %}

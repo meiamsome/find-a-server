@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Find A Server - Login{% endblock %}
+{% block body %}
+<h1>Register</h1>
+{% if form.non_field_errors %}
+<div class="bg-danger" style="padding:15px 15px 5px; margin-bottom: 15px;">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
+{% if user.is_authenticated %}
+<p class="bg-info" style="padding: 15px">
+    You are already logged in.
+</p>
+{% else %}
+<p class="bg-warning" style="padding: 15px">
+    This is not your Minecraft login or your Mojang login. You should never enter your Minecraft or Mojang details on
+    an external website.
+</p>
+<form class="form-horizontal" role="form" method="post" action="{% url 'register' %}">
+{% include "form_template.html" %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Register</button>
+            Forgotten your password? <a href="{% url 'password_reset' %}">Reset it</a>.
+            Already have an account? <a href="{% url 'login' %}">Login</a>.
+        </div>
+    </div>
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Find A Server Statistics{% endblock %}
+{% block body %}
+<h1>Statistics
+    <small> An overview of Find A Server</small>
+</h1>
+{% for name, section in stats.iteritems %}
+<h1>{{ name }}</h1>
+<table class="table table-striped">
+    {% for stat, val in section.iteritems %}
+    <tr>
+        <th>{{ stat }}</th>
+        {% if val.1 %}
+        <td class="text-right"><a href="{{ val.1 }}">{{ val.0 }}</a></td>
+        {% else %}
+        <td class="text-right">{{ val.0 }}</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endfor %}
+{% endblock body %}

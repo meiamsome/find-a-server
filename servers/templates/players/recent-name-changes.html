@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Recent Username Changes{% endblock %}
+{% block body %}
+
+<h2>Recent Username Changes</h2>
+<table class="table">
+    <tr>
+        <th>Current Skin</th>
+        <th>Changed From</th>
+        <th>Current Username</th>
+        <th>Used Dates</th>
+    </tr>
+    {% for change in changes %}
+    <tr>
+    <td>
+        <a href="{{ change.minecraft_account.get_absolute_url }}">
+            <img src="{{ change.minecraft_account.get_absolute_url }}skin/head-64.png" height="64" width="64" alt="Current Face of {{change.minecraft_account}}"/>
+        </a>
+    </td>
+    <td>{{ change.name }}</td>
+    <td><a href="{{ change.minecraft_account.get_absolute_url }}">{{ change.minecraft_account.name }}</a></td>
+    <td>{{change.start}} - {{change.end}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock body %}

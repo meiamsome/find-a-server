@@ -1,0 +1,111 @@
+{% spaceless %}
+<!doctype html>
+{% load staticfiles %}
+<html>
+    <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# find-a-server: http://ogp.me/ns/fb/find-a-server#">
+        <title>{% block title %}Find A Server{% endblock title %}</title>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
+        <link rel="stylesheet" href="{% static 'style.css' %}" />
+        <link href="{{ STATIC_URL }}django_facebook/css/facebook.css" type="text/css" rel="stylesheet" media="all" />
+        {# <!-- TODO: django_facebook --> #}
+        {% include 'django_facebook/_facebook_js.html' %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% if canonical %}
+        <link rel="canonical" href="{{ canonical }}" />
+        {% endif %}
+        {% block head %}
+        {% endblock head %}
+    </head>
+    <body>
+        {% if check_ads and not has_ads %}
+        <script>adcheck=true;</script>
+        {% endif %}
+        <script type="text/javascript" src="/scripts/ads.js"></script>
+		<nav class="navbar" role="navigation">
+			<div class = "container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">Find A Server</a>
+				</div>
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li><a href="/">Servers</a></li>
+						<li><a href="/servers/submit/">Submit A Server</a></li>
+						<li><a href="/players/">Players</a></li>
+						<li><a href="/stats/">Statistics</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user.is_authenticated %}
+                        <li><a href="/users/me/">Welcome {{ user }}.</a></li>
+                        <li><a href="/users/logout/">Logout</a></li>
+                        {% else %}
+                        <li><a href="/users/login/">Login</a></li>
+                        {% endif %}
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class = "container" id="mainbody">
+            {% block pread %}
+            {% endblock pread %}
+            {% if messages %}
+            <ul class="messages list-unstyled">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                    {{ message|linebreaksbr }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <div class="hidden-xs" style="text-align:center;">
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- Find-A-Server top ad -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:728px;height:90px"
+                     data-ad-client="ca-pub-3166796051287009"
+                     data-ad-slot="8575342774"></ins>
+                <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+            {% block body %}
+                <h2>{{ body_title}}</h2>
+                <p>{{ body_text }}</p>
+            {% endblock body %}
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <p class="text-muted"><a href="/privacy/">Privacy Policy</a></p>
+            </div>
+        </footer>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-42104639-2', {% if user.is_authenticated %}{'userId': '{{ user.id }}' }{% else %}'auto'{% endif %});
+      ga('require', 'displayfeatures');
+      ga('send', 'pageview');
+
+    </script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        {% include "graphs.html" %}
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("[data-toggle='tooltip']").tooltip();
+        });
+    </script>
+    </body>
+</html>
+{% endspaceless %}

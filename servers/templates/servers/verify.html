@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Verify server {{ server }}</h1>
+{% if not user.is_authenticated %}
+<p class="bg-danger" style="padding:15px">
+    You must be signed in to verify a server. Please <a href="/users/login/?next={{ server.get_absolute_url }}verify/">log
+    in</a> first.
+</p>
+{% else %}
+{% if server.owner and server.owner == user %}
+<p class="bg-info" style="padding:15px">
+    You own {{ server }}.
+    {% if server.verification %}
+    You used the {{ server.verification.get_verification_mode_display }} Method to verify.
+    {% endif %}
+    <a href="{% url 'management:server' server.id %}">Manage this server</a>.
+</p>
+{% else %}
+{% if server.owner %}
+<p class="bg-warning" style="padding:15px">
+    {{ server }} is already owned by {{ server.owner }}.
+    {% if server.verification %}
+    They used the {{ server.verification.get_verification_mode_display }} Method to verify.
+    {% endif %}
+    Please only proceed if this server is yours.
+</p>
+{% endif %}
+{% endif %}
+<p>
+    There are a few different ways to verify your ownership of a server.
+</p>
+<div class="col-md-6{% if not allow_dns %} method-invalid{% endif %}">
+    <h2>Method 1: DNS Method</h2>
+    {% if not allow_dns %}
+    <p class="explanation bg-warning">
+        You cannot use this method on this server as it does not use a domain.
+    </p>
+    {% endif %}
+    <p>
+        This method is the most secure method and should be used if you can. Once verified, there is no need te remove
+        the verification code and will have no side effects. Keeping the code active will prevent you losing control of
+        the server. This method is only applicable to servers who own their own domain names.
+    </p>
+    <h4>Instructions:</h4>
+    <ol>
+        <li>
+            Edit the DNS for your server's domain name. The following string should be added to your DNS as a TXT
+            record:<br/>
+            <kbd>find-a-server-verification={{ verification1.verification_code }}</kbd><br/>
+            If your server is on a sub-domain, the TXT record should be added to that particular sub-domain.
+            <b>Do not use a wildcard record.</b>
+        </li>
+        <li>
+            Click on this link to check your verification: <a href="{{ server.get_absolute_url }}verify/1/">Check
+            verification.</a><br/>
+            It may take a few hours to propagate the value through the DNS service.
+        </li>
+    </ol>
+</div>
+<div class="col-md-6">
+    <h2>Method 2: MOTD Method</h2>
+
+    <p>
+        This method is the least secure - someone else can override this by performing either verification method. It
+        is, however, the simplest method and should be used by server administrators without the ability to edit their
+        DNS.
+    </p>
+    <h4>Instructions:</h4>
+    <ol>
+        <li>
+            Edit the MOTD for your server (Usually in server.properties) to include this code:
+            <kbd>{{ verification2.verification_code }}</kbd>
+        </li>
+        <li>
+            Save the file and restart your server. (If you have a modded server it may be possible to change the MOTD
+            without restarting.)
+        </li>
+        <li>
+            Click on this link to check your verification: <a href="{{ server.get_absolute_url }}verify/2/">Check
+            verification.</a>
+        </li>
+        <li>(Optional) Once you have checked your verification you may remove the code from your MOTD and restart your
+            server again if you wish.
+        </li>
+    </ol>
+</div>
+{% endif %}
+{% endblock %}

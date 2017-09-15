@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ player }} Minecraft Account{% endblock %}
+{% block body %}
+<h1>{{ player }}</h1>
+<div class="row">
+    <div class="col-sm-3 col-md-2">
+        <img src="{{ player.get_absolute_url }}skin/head-128.png" width="128" height="128" alt="Face of {{ player }}"/>
+    </div>
+    <div class="col-sm-9 col-md-8">
+        <h2>About {{ player }}</h2>
+        {% if not player.owner %}
+        {{ player }} is not currently owned. Do you own {{ player }}? You can verify your ownership
+        on the <a href="{{ player.get_absolute_url }}verify/">verify page</a>.
+        {% elif player.owner == user %}
+        You own {{ player }}.
+        {% else %}
+        {{ player }} is owned by {{ player.owner }}. Are you the rightful owner? Please verify your ownership on the
+        <a href="{{ player.get_absolute_url }}verify/">verify page</a>.
+        {% endif %}
+    </div>
+</div>
+<div class="col-md-9">
+    {% if top_servers %}
+    <h2>Most Played Servers</h2>
+    {% for server in top_servers %}
+    {% include "servers/snipet.html" %}
+    {% endfor %}
+    {% endif %}
+    <h2>Recent Gameplay</h2>
+
+    <div id="playtime-graph"></div>
+    {% for session in recent_playtime %}
+    {% ifchanged %}<h3>{{ session.end_time|date:"jS F" }}</h3>{% endifchanged %}
+    <div>
+        {{session}}
+    </div>
+    {% empty %}
+    <p class="bg-info" style="padding:15px;">
+        This player has no play sessions tracked.
+    </p>
+    {% endfor %}
+</div>
+<div class="col-md-3">
+    <h2>Recent Votes</h2>
+    {% for server in votes %}
+    <div>
+        Voted for {{ server }} {{ server.count }} time{{ server.count|pluralize }}
+    </div>
+    {% empty %}
+    <p class="bg-info" style="padding:15px;">
+        This player has not voted for any servers recently. Perhaps you should invite them to vote!
+    </p>
+    {% endfor %}
+</div>
+{% endblock body %}

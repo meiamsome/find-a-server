@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}{{ server.name }}{% endblock %}
+{% block head %}
+  <meta property="fb:app_id" content="523587411113451" />
+  <meta property="og:type"   content="find-a-server:minecraft_server" />
+  {% if canonical %}
+  <meta property="og:url"    content="{{ canonical }}" />
+  {% else %}
+  <meta property="og:url"    content="https://find-a-server.com{{ request.path }}" />
+  {% endif %}
+  <meta property="og:title"  content="{{ server.name }}" />
+  <meta property="og:image"  content="https://find-a-server.com{{ cover_image.0 }}" />
+{% endblock head %}
+{% block pread %}
+<h1 id="server_title" style="background-image: url('{{ cover_image.0 }}'); background-position: {{ cover_image.1 }};"{% if cover_image.2 %} class="alt"{% endif %}>{{ server.name }}
+</h1>
+<div class="row" style="margin-bottom:10px;">
+    <div class="col-sm-6">Address: <kbd>{{ server.address }}{% if server.port != 25565 %}:{{ server.port }}{% endif %}
+    </kbd></div>
+    <div class="col-sm-3{% if not server.owner %} hidden-xs"><a href="{{ server.get_absolute_url }}verify/">Claim this server</a>{% else %}">Owner: {{ server.owner }} (<a href="{{ server.get_absolute_url }}verify/">Dispute</a>){% endif %}</div>
+    <div class="col-sm-3">Up Time: {{ uptime }}</div>
+</div>
+{% endblock pread %}
+{% block body %}
+{% load myfilters %}
+<div class="row">
+    <div class="col-lg-6">
+    <div id="player-count-graph"></div>
+    </div>
+    <div class="col-lg-6">
+        <h2>Vote for this Server</h2>
+        {% if has_votifier %}
+        <p class="bg-success">
+            This server has votifier enabled, you may be rewarded in game for your vote.
+            {% if votifier_outstanding  %}<br />
+            However, there {{ votifier_outstanding|pluralize:"is,are" }} {{ votifier_outstanding }} unsubmitted vote{{ votifier_outstanding|pluralize }}.{% endif %}
+        </p>
+        {% endif %}
+        <p class="bg-info">You have {{ votes_left }} vote{{ votes_left|pluralize}} for this server remaining.</p>
+        {% if vote_count < allowed_votes %}
+        <form class="form-horizontal vote-form" role="form" method="post" action="{{ server.get_absolute_url }}">
+            {% include "form_template.html" with form=vote_form %}
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-2">
+                    <button type="submit" class="btn btn-default">Vote!</button>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <p class="bg-warning">
+            You have voted over your limit of {{ allowed_votes }} vote{{ allowed_votes|pluralize }} per 24 hours.
+            You can next vote in {{ next_expire|timedelta }}.
+            {% if user.is_authenticated %}
+            {% if not has_ads %}
+            You can gain an extra vote by disabling adblock on this website (You will need to refresh the page
+            for this to be verified).
+            {% endif %}
+            {% else %}
+            {% if has_ads %}
+            You can gain an extra vote by logging in.
+            {% else %}
+            You can gain extra votes by logging in or by disabling adblock on this website (You will need to refresh
+            the page for this to be verified).
+            {% endif %}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+    {% if show_last_playtimes %}
+    <div class="col-xs-12">
+        <h3>Last 50 Sessions</h3>
+    <div id="playtime-graph"></div>
+    </div>
+    {% endif %}
+</div>
+<h3>Totals This Week</h3>
+<div class="row">
+<div class="col-sm-3">Playtime: {% if total_playtime%}{{ total_playtime|timedelta }}{% else %}0 Hours{%endif%}</div>
+<div class="col-sm-3">Votes: {{ total_votes }}</div>
+<div class="col-sm-3">Players: {{ total_players }}</div>
+<div class="col-sm-3">Score: {{ server.score }}</div>
+</div>
+<div class="col-sm-6 col-lg-3">
+    <h2>Top Players this Week</h2>
+    {% if top_players %}
+    <ul class="list-unstyled player-list">
+        {% for player in top_players %}
+        <li class="col-xs-12">
+            <img src="{{ player.get_absolute_url }}skin/head-64.png" width="64" height="64" alt="Face of {{player}}"/>
+
+            <div>
+                <a href="{{ player.get_absolute_url }}">{{ player.name}}</a><br/>{{player.time|timedelta}}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="clearfix"></div>
+    {% else %}
+    <p class="bg-info" style="padding:15px;">
+        No players have been tracked on this server, it's possible no one has played here or
+        maybe the server doesn't have the advanced query enabled.
+    </p>
+    {% endif %}
+</div>
+<div class="col-sm-6 col-lg-3">
+    <h2>Top Voters this Week</h2>
+    {% if top_voters %}
+    <ul class="list-unstyled player-list">
+        {% for player in top_voters %}
+        <li class="col-xs-12">
+            <img src="{{ player.get_absolute_url }}skin/head-64.png" width="64" height="64" alt="Face of {{player}}"/>
+
+            <div>
+                <a href="{{ player.get_absolute_url }}">{{ player.name}}</a><br/>{{player.votes}} Votes
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="clearfix"></div>
+    {% else %}
+    <p class="bg-info" style="padding:15px;">
+        This server has not received any votes. Be the first and your username could be here!
+    </p>
+    {% endif %}
+</div>
+<div class="col-sm-6 col-lg-3">
+    <h2>Online Now</h2>
+    {% if online %}
+    <ul class="list-unstyled player-list">
+        {% for player in online %}
+        <li class="col-xs-12">
+            <img src="{{ player.get_absolute_url }}skin/head-64.png" width="64" height="64" alt="Face of {{player}}"/>
+
+            <div>
+                <a href="{{ player.get_absolute_url }}">{{ player.name}}</a><br/>
+                Playing {% if player.duration%}for {{player.duration|timedelta}}{%else%} just now{%endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="clearfix"></div>
+    {% else %}
+    <p class="bg-info" style="padding:15px;">
+        No players have been tracked on this server recently, it's possible no one has played here or
+        maybe the server doesn't have the advanced query enabled.
+    </p>
+    {% endif %}
+</div>
+{% endblock body %}

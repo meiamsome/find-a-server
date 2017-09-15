@@ -1,0 +1,40 @@
+{% load myfilters %}
+<div class="server-snipet panel panel-default{% if server.rank and server.rank < 100 %} panel-warning{% endif %}">
+    <a href="{{ server.get_absolute_url }}" class="panel-heading">
+        {{ server.name }}
+        {% if player and server.time %}
+        <small> - {{server.time|timedelta}}</small>
+        {% endif %}
+        {% if server.rank %}<span style="float: right;">#{{ server.rank }}</span>{% endif %}
+    </a>
+
+    <div class="panel-body">
+        {% if server.image_url %}
+        <div>
+            <img src="{{ server.image_url }}" class="hidden-xs"/>
+        </div>
+        {% endif %}
+        <div class = "description{% if not server.description %} no-description{% endif %}">
+            {% if server.description %}
+            {{ server.description }}
+            {% else %}
+            No description has been provided for this server
+            {% endif %}
+        </div>
+        <!--
+        <ul class="tags">
+            {{ server.online_mode|yesno:"<li>On-line</li>,<li>Off-line</li>,"|safe }}
+            {% if server.protocol %}
+            <li>{{ server.protocol }}</li>
+            {% endif %}
+        </ul> -->
+        {% if server.online_players %}
+        <b>Recently Online ({{ server.online_player_count }})</b><br />
+        <div style="height: 32px; overflow: hidden;">
+        {% for player in server.online_players %}
+        <a href="{{ player.get_absolute_url }}"><img src="{{ player.get_absolute_url }}skin/head-32.png" width="32" height="32" style="margin-right: 4px;" data-toggle="tooltip" title="{{player}}" alt="{{player}}" /></a>
+        {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>

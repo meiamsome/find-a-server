@@ -1,0 +1,9 @@
+{% if top_servers %}
+    <ul>
+    {% for server in top_servers %}
+        <li><a href="{% url 'servers:detail' server.id %}">{{ server.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No servers are available.</p>
+{% endif %}

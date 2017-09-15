@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Verify player {{ player }}</h1>
+{% if not user.is_authenticated %}
+<p class="bg-danger" style="padding:15px">
+    You must be signed in to verify an account. Please <a href="{% url 'login' %}?next={{ player.get_absolute_url }}verify/">log
+    in</a> first.
+</p>
+{% else %}
+{% if player.owner and player.owner == user %}
+<p class="bg-info" style="padding:15px">
+    You have verified your ownership of {{ player }}.
+</p>
+{% else %}
+{% if player.owner %}
+<p class="bg-warning" style="padding:15px">
+    {{ player }} is already owned by {{ player.owner }}. Please only proceed if this account is yours.
+</p>
+{% endif %}
+<p>
+    To verify your account, you must sign in to the Find A Server authentication server using a minecraft client.
+    Simply open your Minecraft client and connect to the server at <kbd>find-a-server.com</kbd>. You will be given
+    an 8 digit code that you should enter on this page to verify your account.
+</p>
+<form class="form-horizontal" role="form" method="post" action="{{ player.get_absolute_url }}verify/">
+    {% include "form_template.html" %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Verify</button>
+        </div>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}"/>
+</form>
+{% endif %}
+{% endif %}
+{% endblock %}
