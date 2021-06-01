@@ -29,5 +29,5 @@ shellescape==3.4.1
 singledispatch==3.4.0.3
 six==1.10.0
 Unidecode==0.4.21
-urllib3==1.22
+urllib3==1.26.5
 wrapt==1.10.11
